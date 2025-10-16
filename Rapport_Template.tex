@@ -1,0 +1,542 @@
+% Template LaTeX pour le Rapport TP1 - Réservation de Terrains
+\documentclass[12pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+% Configuration
+\geometry{margin=2.5cm}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+% Style du code
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% En-tête et pied de page
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{TP1 - Système de Réservation}
+\rhead{\today}
+\cfoot{\thepage}
+
+% Début du document
+\begin{document}
+
+% Page de garde
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\Huge\bfseries Système de Réservation\\de Terrains de Football\par}
+    \vspace{1cm}
+    {\Large Travail Pratique 1\par}
+    \vspace{2cm}
+    
+    {\Large\itshape Votre Nom\par}
+    {\large Matricule: XXXXXXXX\par}
+    \vspace{1cm}
+    
+    {\large Cours: [Nom du cours]\par}
+    {\large Professeur: [Nom du professeur]\par}
+    \vspace{2cm}
+    
+    {\large Université du Québec à Rimouski (UQAR)\par}
+    \vspace{1cm}
+    
+    {\large\today\par}
+    
+    \vfill
+\end{titlepage}
+
+% Table des matières
+\tableofcontents
+\newpage
+
+% ================================
+% 1. INTRODUCTION
+% ================================
+\section{Introduction}
+
+\subsection{Contexte du projet}
+Ce projet consiste en la réalisation d'un système de réservation de terrains de football permettant aux clients de réserver des créneaux horaires, d'effectuer des paiements sécurisés et de télécharger leurs factures.
+
+\subsection{Objectifs}
+Les objectifs principaux de ce travail sont :
+\begin{itemize}
+    \item Développer une application web MVC complète avec ASP.NET Core
+    \item Implémenter un système d'authentification multi-rôles
+    \item Intégrer un système de paiement électronique (Stripe)
+    \item Gérer la persistance des données avec Entity Framework Core
+    \item Créer des interfaces utilisateur modernes et responsives
+\end{itemize}
+
+\subsection{Technologies utilisées}
+\begin{itemize}
+    \item \textbf{Backend:} ASP.NET Core MVC 8.0, C\#
+    \item \textbf{Base de données:} SQL Server (LocalDB), Entity Framework Core 9.0
+    \item \textbf{Authentification:} ASP.NET Core Identity
+    \item \textbf{Paiement:} Stripe SDK .NET
+    \item \textbf{Frontend:} Bootstrap 5, Font Awesome, jQuery
+    \item \textbf{Outils:} Visual Studio/VS Code, Git, Postman
+\end{itemize}
+
+% ================================
+% 2. ARCHITECTURE
+% ================================
+\section{Architecture du système}
+
+\subsection{Architecture MVC}
+L'application suit le pattern Model-View-Controller (MVC) :
+\begin{itemize}
+    \item \textbf{Models:} 7 entités principales + ViewModels
+    \item \textbf{Views:} 25+ vues Razor avec Bootstrap 5
+    \item \textbf{Controllers:} 6 contrôleurs principaux
+\end{itemize}
+
+\subsection{Modèle de données}
+
+\subsubsection{Entités principales}
+\begin{enumerate}
+    \item \textbf{Utilisateur} - Gestion des comptes (Client, Fournisseur, Admin)
+    \item \textbf{Terrain} - Informations sur les terrains de football
+    \item \textbf{Creneau} - Créneaux horaires disponibles
+    \item \textbf{PanierItem} - Articles dans le panier
+    \item \textbf{Reservation} - Réservations effectuées
+    \item \textbf{Paiement} - Transactions Stripe
+    \item \textbf{Facture} - Factures générées
+\end{enumerate}
+
+\subsubsection{Relations entre entités}
+% Insérer un diagramme ER ici
+\begin{center}
+\textit{[Insérer le diagramme de la base de données]}
+\end{center}
+
+\subsection{Architecture des services}
+Trois services métier principaux :
+\begin{itemize}
+    \item \textbf{CreneauService:} Gestion des créneaux et disponibilités
+    \item \textbf{PaiementService:} Intégration avec Stripe
+    \item \textbf{FactureService:} Génération et gestion des factures
+\end{itemize}
+
+% ================================
+% 3. FONCTIONNALITÉS
+% ================================
+\section{Fonctionnalités implémentées}
+
+\subsection{Authentification et autorisation}
+\subsubsection{Gestion des utilisateurs}
+\begin{itemize}
+    \item Inscription avec validation des données
+    \item Connexion avec option "Se souvenir de moi"
+    \item Gestion du profil (modification nom, email, mot de passe)
+    \item Déconnexion sécurisée
+\end{itemize}
+
+\subsubsection{Système de rôles}
+Trois rôles distincts avec permissions spécifiques :
+\begin{enumerate}
+    \item \textbf{Client:} Parcourir, réserver, payer, consulter factures
+    \item \textbf{Fournisseur:} Accès aux statistiques de revenus
+    \item \textbf{Admin:} Dashboard complet, gestion des réservations/terrains/utilisateurs
+\end{enumerate}
+
+\subsection{Parcours client}
+
+\subsubsection{Navigation et filtrage}
+\begin{itemize}
+    \item Affichage paginé des créneaux disponibles
+    \item Filtres multiples :
+    \begin{itemize}
+        \item Par date
+        \item Par type de terrain (5-a-side, 7-a-side, 11-a-side)
+        \item Par localisation
+    \end{itemize}
+    \item Barre de recherche par nom de terrain
+    \item Combinaison de plusieurs filtres simultanément
+\end{itemize}
+
+\subsubsection{Détails des créneaux}
+Page détaillée affichant :
+\begin{itemize}
+    \item Image du terrain
+    \item Informations complètes (nom, type, localisation)
+    \item Horaires et disponibilités
+    \item Prix par place
+    \item Description du terrain
+\end{itemize}
+
+\subsubsection{Gestion du panier}
+\begin{itemize}
+    \item Ajout de créneaux multiples
+    \item Modification des quantités
+    \item Suppression d'articles
+    \item Calcul automatique du total
+    \item Validation des places disponibles
+    \item Persistance du panier par utilisateur
+\end{itemize}
+
+\subsection{Paiement électronique}
+
+\subsubsection{Intégration Stripe}
+\begin{itemize}
+    \item Création de PaymentIntent côté serveur
+    \item Interface de paiement sécurisée (Stripe Elements)
+    \item Gestion des erreurs de paiement
+    \item Confirmation du paiement
+    \item Traçabilité dans le dashboard Stripe
+\end{itemize}
+
+\subsubsection{Sécurité des transactions}
+\begin{itemize}
+    \item Clés API en variables d'environnement
+    \item Mode sandbox pour les tests
+    \item Validation côté serveur
+    \item Protection CSRF avec antiforgery tokens
+\end{itemize}
+
+\subsection{Système de facturation}
+\begin{itemize}
+    \item Génération automatique après paiement réussi
+    \item Numéro de facture unique (format: FAC-YYYYMMDD-XXXXXX)
+    \item Consultation et téléchargement des factures
+    \item Historique complet des factures
+    \item Fonction d'impression optimisée
+\end{itemize}
+
+\subsection{Dashboard administrateur}
+
+\subsubsection{Indicateurs clés (KPIs)}
+\begin{itemize}
+    \item Total des réservations
+    \item Réservations confirmées
+    \item Revenu total généré
+    \item Taux de conversion
+\end{itemize}
+
+\subsubsection{Statistiques avancées}
+\begin{itemize}
+    \item Top 10 des clients (par dépenses)
+    \item Taux de remplissage par terrain
+    \item Réservations récentes
+    \item Revenus par jour (7 derniers jours)
+\end{itemize}
+
+\subsubsection{Gestion}
+\begin{itemize}
+    \item Vue d'ensemble des réservations
+    \item Gestion des terrains
+    \item Gestion des utilisateurs
+\end{itemize}
+
+% ================================
+% 4. IMPLÉMENTATION
+% ================================
+\section{Détails d'implémentation}
+
+\subsection{Configuration de la base de données}
+\subsubsection{Connection string}
+\begin{lstlisting}[language=json]
+"ConnectionStrings": {
+  "DefaultConnection": "Server=(localdb)\\mssqllocaldb;
+  Database=ReservationTerrainsDB;
+  Trusted_Connection=True;
+  MultipleActiveResultSets=true"
+}
+\end{lstlisting}
+
+\subsubsection{Migrations}
+Commandes utilisées :
+\begin{lstlisting}[language=bash]
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+\end{lstlisting}
+
+\subsection{Seeding de données}
+Le fichier \texttt{DbInitializer.cs} peuple automatiquement la base avec :
+\begin{itemize}
+    \item 3 rôles (Admin, Client, Fournisseur)
+    \item 3 utilisateurs de test
+    \item 3 terrains différents
+    \item 126 créneaux (3 terrains × 6 créneaux/jour × 7 jours)
+\end{itemize}
+
+\subsection{Extraits de code significatifs}
+
+\subsubsection{Service de paiement}
+\begin{lstlisting}[language={[Sharp]C}]
+public async Task<string> CreerPaymentIntentAsync(
+    decimal montant, string devise = "eur")
+{
+    var options = new PaymentIntentCreateOptions
+    {
+        Amount = (long)(montant * 100),
+        Currency = devise,
+        AutomaticPaymentMethods = new 
+            PaymentIntentAutomaticPaymentMethodsOptions
+        {
+            Enabled = true,
+        },
+    };
+    
+    var service = new PaymentIntentService();
+    var paymentIntent = await service.CreateAsync(options);
+    return paymentIntent.ClientSecret;
+}
+\end{lstlisting}
+
+% [Ajouter d'autres extraits pertinents]
+
+% ================================
+% 5. TESTS
+% ================================
+\section{Tests et validation}
+
+\subsection{Tests fonctionnels}
+\subsubsection{Scénarios testés}
+\begin{enumerate}
+    \item Navigation et filtrage des créneaux
+    \item Inscription et connexion
+    \item Ajout au panier et modification
+    \item Processus de paiement complet
+    \item Génération de factures
+    \item Accès aux dashboards (Client, Fournisseur, Admin)
+    \item Protection des routes par rôle
+\end{enumerate}
+
+\subsection{Tests de sécurité}
+\begin{itemize}
+    \item Validation des formulaires (client et serveur)
+    \item Protection CSRF
+    \item Autorisation par rôle
+    \item Sanitisation des entrées
+\end{itemize}
+
+\subsection{Tests avec Postman}
+% [Décrire les tests API effectués]
+
+\subsection{Résultats des tests}
+Tableau récapitulatif :
+
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Fonctionnalité} & \textbf{Statut} \\
+\hline
+Authentification & ✓ Réussi \\
+Filtrage créneaux & ✓ Réussi \\
+Panier multi-créneaux & ✓ Réussi \\
+Paiement Stripe & ✓ Réussi \\
+Génération factures & ✓ Réussi \\
+Dashboard Admin & ✓ Réussi \\
+\hline
+\end{tabular}
+\end{center}
+
+% ================================
+% 6. INTERFACE UTILISATEUR
+% ================================
+\section{Interface utilisateur}
+
+\subsection{Design et ergonomie}
+\begin{itemize}
+    \item Design moderne avec Bootstrap 5
+    \item Utilisation de Font Awesome pour les icônes
+    \item Animations CSS personnalisées
+    \item Dégradés de couleurs pour les boutons et alertes
+\end{itemize}
+
+\subsection{Responsive design}
+L'application est entièrement responsive et testée sur :
+\begin{itemize}
+    \item Desktop (1920×1080)
+    \item Tablette (768×1024)
+    \item Mobile (375×667)
+\end{itemize}
+
+\subsection{Captures d'écran}
+% Insérer captures d'écran ici
+\begin{figure}[h]
+\centering
+% \includegraphics[width=0.8\textwidth]{images/accueil.png}
+\caption{Page d'accueil avec liste des créneaux}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+% \includegraphics[width=0.8\textwidth]{images/panier.png}
+\caption{Page du panier}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+% \includegraphics[width=0.8\textwidth]{images/admin.png}
+\caption{Dashboard administrateur}
+\end{figure}
+
+% [Ajouter d'autres captures]
+
+% ================================
+% 7. DIFFICULTÉS ET SOLUTIONS
+% ================================
+\section{Difficultés rencontrées et solutions}
+
+\subsection{Intégration Stripe}
+\textbf{Difficulté:} Configuration initiale de Stripe Elements et gestion asynchrone.\\
+\textbf{Solution:} Utilisation de la dernière version de Stripe.js et gestion appropriée des promesses JavaScript.
+
+\subsection{Gestion des places disponibles}
+\textbf{Difficulté:} Problèmes de concurrence lors de réservations simultanées.\\
+\textbf{Solution:} Validation côté serveur avec transactions et vérification des places avant confirmation.
+
+% [Ajouter d'autres difficultés rencontrées]
+
+% ================================
+% 8. AMÉLIORATIONS FUTURES
+% ================================
+\section{Améliorations possibles}
+
+\begin{enumerate}
+    \item \textbf{Notifications:} Envoi d'emails de confirmation et rappels
+    \item \textbf{Calendrier:} Vue calendrier pour les créneaux
+    \item \textbf{Recherche avancée:} Filtres supplémentaires (prix, notes)
+    \item \textbf{Système d'avis:} Permettre aux clients de noter les terrains
+    \item \textbf{Gestion des équipes:} Créer et gérer des équipes
+    \item \textbf{Statistiques avancées:} Graphiques interactifs avec Chart.js
+    \item \textbf{Export de données:} Export Excel/PDF des rapports
+    \item \textbf{API REST:} Créer une API pour applications mobiles
+    \item \textbf{Internationalisation:} Support multilingue
+    \item \textbf{Dark mode:} Thème sombre
+\end{enumerate}
+
+% ================================
+% 9. CONCLUSION
+% ================================
+\section{Conclusion}
+
+Ce projet m'a permis de développer une application web complète en utilisant les technologies ASP.NET Core MVC. J'ai pu mettre en pratique :
+
+\begin{itemize}
+    \item La conception d'une architecture MVC robuste
+    \item L'implémentation d'un système d'authentification multi-rôles
+    \item L'intégration d'un système de paiement tiers (Stripe)
+    \item La gestion de la persistance avec Entity Framework Core
+    \item La création d'interfaces utilisateur modernes et responsives
+\end{itemize}
+
+Les objectifs du travail pratique ont été atteints avec succès, et l'application est fonctionnelle et prête à être déployée.
+
+% ================================
+% ANNEXES
+% ================================
+\appendix
+\section{Annexe A : Structure du projet}
+
+\begin{lstlisting}
+TP1/
+├── Controllers/
+│   ├── AccountController.cs
+│   ├── AdminController.cs
+│   ├── CartController.cs
+│   ├── CheckoutController.cs
+│   ├── HomeController.cs
+│   └── ReservationsController.cs
+├── Models/
+│   ├── ViewModels/
+│   ├── Utilisateur.cs
+│   ├── Terrain.cs
+│   ├── Creneau.cs
+│   ├── PanierItem.cs
+│   ├── Reservation.cs
+│   ├── Paiement.cs
+│   └── Facture.cs
+├── Views/
+├── Services/
+├── Data/
+└── wwwroot/
+\end{lstlisting}
+
+\section{Annexe B : Comptes de test}
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Rôle} & \textbf{Email} & \textbf{Mot de passe} \\
+\hline
+Admin & admin@terrains.com & Admin123! \\
+Fournisseur & fournisseur@terrains.com & Fournisseur123! \\
+Client & client@terrains.com & Client123! \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Annexe C : Instructions d'installation}
+
+Voir le fichier \texttt{README.md} pour les instructions complètes d'installation et de configuration.
+
+% ================================
+% RÉFÉRENCES
+% ================================
+\begin{thebibliography}{9}
+
+\bibitem{aspnet}
+Microsoft,
+\textit{ASP.NET Core Documentation},
+\url{https://docs.microsoft.com/aspnet/core/}
+
+\bibitem{ef}
+Microsoft,
+\textit{Entity Framework Core Documentation},
+\url{https://docs.microsoft.com/ef/core/}
+
+\bibitem{stripe}
+Stripe,
+\textit{Stripe API Documentation},
+\url{https://stripe.com/docs/api}
+
+\bibitem{bootstrap}
+Bootstrap Team,
+\textit{Bootstrap 5 Documentation},
+\url{https://getbootstrap.com/docs/5.0/}
+
+\end{thebibliography}
+
+\end{document}
+

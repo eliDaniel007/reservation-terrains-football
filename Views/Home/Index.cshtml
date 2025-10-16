@@ -1,0 +1,126 @@
+﻿@model IEnumerable<TP1.Models.Creneau>
+@{
+    ViewData["Title"] = "Accueil - Réservez votre terrain";
+}
+
+<!-- Hero Section -->
+<div class="bg-primary text-white rounded-3 p-5 mb-4">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <h1 class="display-4 fw-bold">Réservez votre terrain de foot</h1>
+            <p class="lead">Trouvez et réservez facilement des créneaux horaires sur nos terrains de qualité</p>
+        </div>
+        <div class="col-lg-4 text-center">
+            <i class="fas fa-futbol" style="font-size: 8rem; opacity: 0.2;"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Filtres -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label"><i class="fas fa-calendar me-2"></i>Date</label>
+                <input type="date" name="date" class="form-control" value="@ViewBag.Date?.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label"><i class="fas fa-users me-2"></i>Type de terrain</label>
+                <select name="typeTerrain" class="form-select">
+                    <option value="">Tous</option>
+                    <option value="5-a-side" selected="@(ViewBag.TypeTerrain == "5-a-side")">5-a-side</option>
+                    <option value="7-a-side" selected="@(ViewBag.TypeTerrain == "7-a-side")">7-a-side</option>
+                    <option value="11-a-side" selected="@(ViewBag.TypeTerrain == "11-a-side")">11-a-side</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label"><i class="fas fa-map-marker-alt me-2"></i>Localisation</label>
+                <input type="text" name="localisation" class="form-control" value="@ViewBag.Localisation" placeholder="Ville, quartier..." />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label"><i class="fas fa-search me-2"></i>Recherche</label>
+                <div class="input-group">
+                    <input type="text" name="recherche" class="form-control" value="@ViewBag.Recherche" placeholder="Nom du terrain..." />
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Liste des créneaux -->
+@if (Model.Any())
+{
+    <h3 class="mb-4"><i class="fas fa-list me-2"></i>Créneaux disponibles (@Model.Count())</h3>
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var creneau in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm hover-shadow">
+                    @if (!string.IsNullOrEmpty(creneau.Terrain.ImageUrl))
+                    {
+                        <img src="@creneau.Terrain.ImageUrl" class="card-img-top" alt="@creneau.Terrain.Nom" style="height: 200px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-futbol fa-4x opacity-50"></i>
+                        </div>
+                    }
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">@creneau.Terrain.Nom</h5>
+                        <p class="card-text text-muted">
+                            <i class="fas fa-map-marker-alt me-1"></i>@creneau.Terrain.Localisation
+                        </p>
+                        
+                        <div class="mb-2">
+                            <span class="badge bg-info">@creneau.Terrain.Type</span>
+                            <span class="badge bg-success">@creneau.PlacesRestantes places</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <small class="text-muted d-block">
+                                    <i class="fas fa-calendar me-1"></i>@creneau.Date.ToString("dd/MM/yyyy")
+                                </small>
+                                <small class="text-muted d-block">
+                                    <i class="fas fa-clock me-1"></i>@creneau.HeureDebut.ToString(@"hh\:mm") - @creneau.HeureFin.ToString(@"hh\:mm")
+                                </small>
+                            </div>
+                            <h4 class="text-primary mb-0">@creneau.Prix.ToString("C")</h4>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer bg-white border-top-0">
+                        <a asp-action="Details" asp-route-id="@creneau.Id" class="btn btn-primary w-100">
+                            <i class="fas fa-info-circle me-2"></i>Voir détails
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info text-center py-5">
+        <i class="fas fa-info-circle fa-3x mb-3"></i>
+        <h4>Aucun créneau disponible</h4>
+        <p>Essayez de modifier vos critères de recherche.</p>
+    </div>
+}
+
+@section Scripts {
+    <style>
+        .hover-shadow {
+            transition: box-shadow 0.3s ease;
+        }
+        .hover-shadow:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25) !important;
+        }
+    </style>
+}
